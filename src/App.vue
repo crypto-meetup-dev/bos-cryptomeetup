@@ -30,8 +30,9 @@
       </b-modal>
       <a class="nav-item" @click="aboutShow=!aboutShow">{{$t('about_view')}}</a>
       <a class="nav-item" @click="taggleMyPortal">{{$t('my_portal_nav')}}</a>
+      <a class="nav-item" @click="tokenShow=!tokenShow">{{$t('token_view')}}</a>
     </div>
-    <!-- <Tokenview
+    <Tokenview
       :tokenShow="tokenShow"
       :mobileTokenShow="mobileTokenShow"
       :globalInfo="globalInfo"
@@ -50,7 +51,7 @@
       @buyCMU="buyCMU"
       @sellCMU="sellCMU"
       @vote="vote"
-    /> -->
+    />
     <Aboutview
       :aboutShow="aboutShow"
       :mobileAboutShow="mobileAboutShow"

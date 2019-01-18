@@ -1,5 +1,5 @@
 const PriceFormatter = {
-  formatPrice(price, unit = 'EOS') {
+  formatPrice(price, unit = 'BOS') {
     return `${(price / 10000).toDecimal(4)} ${unit}`;
   },
   install(Vue) {

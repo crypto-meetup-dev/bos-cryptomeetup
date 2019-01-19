@@ -179,7 +179,6 @@ export default {
   created() {
     this.countdownUpdater = setInterval(() => {
       if (this.globalInfo != null) {
-        console.log(this.globalInfo, 'this.globalInfo')
         const currentTimestamp = Math.floor(Date.now() / 1000);
         if (currentTimestamp >= this.globalInfo.ed) {
           this.globalCountdown = 'ENDED';

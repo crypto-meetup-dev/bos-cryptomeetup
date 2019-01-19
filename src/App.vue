@@ -5,7 +5,21 @@
     <!--<GlobalSpinner v-show="!globalProgressVisible && globalSpinnerVisible" />-->
     <Loading v-show="!globalProgressVisible && globalSpinnerVisible" loadText="loading ..." />
     <!--<div class="app-nav is-hidden-mobile" v-show="!tokenShow">-->
-    <myPortal v-if="portalShow" :portalList="portalList" @closeMyPortal="closeMyPortal" />
+    <div class="mylangd" v-if="isShowMylangd">
+      <div class="close-mylangd" @click="closeMylangd"><img src="./assets/icons/close.png" /></div>
+      <div 
+        v-if="myLangdArr.length" 
+        v-for="(item, index) in myLangdArr" 
+        :key="index" 
+        class="mylangd-item"
+      >
+        <p>{{$t('my_portal_name')}}: {{getCountryName(item.name.code)}}</p>
+        <p>{{$t('my_portal_price')}}: {{`${item.price / 10000} BOS`}}</p>
+      </div>
+      <div v-if="!myLangdArr.length" class="no-langd">
+        No
+      </div>
+    </div>
     <div class="app-nav is-hidden-mobile">
       <button :class="['nav-item', 'button', 'is-white', 'is-small', 'is-rounded', 'is-outlined', { 'is-loading': isScatterLoggingIn }]"
         @click="loginScatterAsync"
@@ -150,6 +164,15 @@ import Loading from '@/components/Loading.vue';
 // import GlobalProgress from '@/components/GlobalProgress.vue';
 import InviteModal from '@/components/InviteModal.vue';
 import myPortal from '@/components/landmark//myPortal.vue'
+import * as CountryCode from 'i18n-iso-countries';
+
+CountryCode.registerLocale(require('i18n-iso-countries/langs/en.json'));
+CountryCode.registerLocale(require('i18n-iso-countries/langs/zh.json'));
+CountryCode.registerLocale(require('i18n-iso-countries/langs/ko.json'));
+CountryCode.registerLocale(require('i18n-iso-countries/langs/ja.json'));
+CountryCode.registerLocale(require('i18n-iso-countries/langs/ru.json'));
+// 繁体中文
+CountryCode.registerLocale(require('./i18n/Country_zh_tw.json'));
 
 export default {
   name: 'App',
@@ -174,7 +197,9 @@ export default {
     appLogin: false,
     portalShow: false,
     portalList: [],
-    i18nCode: ''
+    i18nCode: '',
+    isShowMylangd: false,
+    myLangdArr: []
   }),
   created() {
     this.countdownUpdater = setInterval(() => {
@@ -206,6 +231,13 @@ export default {
   },
   methods: {
     ...mapActions(['getMyStakedInfo', 'getMyBalances', 'connectScatterAsync', 'updateLandInfoAsync', 'loginScatterAsync', 'logoutScatterAsync', 'updateMarketInfoAsync', 'getGlobalInfo']),
+    closeMylangd () {
+      this.isShowMylangd = false
+    },
+    getCountryName(countryCode) {
+      const locale = CountryCode.langs().includes(this.$i18n.locale) ? this.$i18n.locale : 'en';
+      return CountryCode.getName(countryCode, locale);
+    },
     async vote (voteName, callback) {
       try {
         await API.voteAsync({to: voteName})
@@ -374,7 +406,7 @@ export default {
     async buyCMU() {
       let amount = window.prompt(this.$t('buy_cmu_alert'));
       amount = parseFloat(amount).toFixed(4);
-      amount += ' EOS';
+      amount += ' BOS';
       try {
         await API.transferTokenAsync({
           from: this.scatterAccount.name,
@@ -414,7 +446,7 @@ export default {
         await API.transferTokenAsync({
           from: this.scatterAccount.name,
           to: 'cryptomeetup',
-          tokenContract: 'dacincubator',
+          tokenContract: 'ncldwqxpkgav',
           memo: 'sell',
           amount,
         });
@@ -480,7 +512,7 @@ export default {
       this.isInviteDialogActive = true;
     },
     taggleMyPortal () {
-      this.portalShow = !this.portalShow
+      this.isShowMylangd = !this.isShowMylangd
     },
     closeMyPortal () {
       this.portalShow = false
@@ -494,10 +526,42 @@ export default {
     i18nCode (val) {
       this.$i18n.locale = val
       localStorage.setItem('language', val)
+    },
+    landInfo (landInfo) {
+      if (!this.myLangdArr.length && landInfo && this.scatterAccount && this.scatterAccount.name) {
+        console.log(1)
+     
+        var myLangdArr = []
+        for (let key in landInfo) {
+          if (landInfo[key].owner === this.scatterAccount.name) {
+            myLangdArr.push({
+              price: landInfo[key].price,
+              name: landInfo[key]
+            })
+          }
+        }
+        this.myLangdArr = myLangdArr
+      }
+    },
+    scatterAccount (scatterAccount) {
+      // console.log()
+      if (!this.myLangdArr.length && this.landInfo && scatterAccount && scatterAccount.name) {
+       console.log(2)
+        var myLangdArr = []
+        for (let key in this.landInfo) {
+          if (this.landInfo[key].owner === scatterAccount.name) {
+            myLangdArr.push({
+              price: this.landInfo[key].price,
+              name: this.landInfo[key]
+            })
+          }
+        }
+        this.myLangdArr = myLangdArr
+      }
     }
   },
   computed: {
-    ...mapState(['landInfoUpdateAt', 'isScatterConnected', 'scatterAccount', 'isScatterLoggingIn', 'balances', 'marketInfo', 'stakedInfo', 'globalInfo', 'dividendInfo', 'myCheckInStatus']),
+    ...mapState(['landInfo','landInfoUpdateAt', 'isScatterConnected', 'scatterAccount', 'isScatterLoggingIn', 'balances', 'marketInfo', 'stakedInfo', 'globalInfo', 'dividendInfo', 'myCheckInStatus']),
     ...mapState('ui', ['navBurgerVisible', 'latestBuyerVisible', 'globalSpinnerVisible', 'globalProgressVisible', 'globalProgressValue']),
   },
   mounted() {
@@ -538,6 +602,41 @@ a:hover
 </style>
 
 <style lang="sass" scoped>
+.mylangd 
+  position: absolute
+  left: 20px
+  top: 100px
+  bottom: 100px
+  right: 20px
+  z-index: 999
+  background: rgb(25, 25, 25)
+  overflow-y: scroll
+  padding-top: 20px
+
+.no-langd
+  text-align: center
+  font-size: 12px
+  padding: 50px 0
+  color: #fff
+
+.mylangd-item
+  font-size: 12px
+  color: #fff
+  padding-left: 20px
+  margin-bottom: 20px
+
+.close-mylangd
+  position: absolute
+  right: 20px
+  top: 20px
+  cursor: pointer
+  width: 24px
+  height: 24px
+
+  img
+    display: block
+    width: 24px
+    height: 24px
 #app
   position: absolute
   left: 0

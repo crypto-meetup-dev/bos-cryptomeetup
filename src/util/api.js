@@ -78,10 +78,10 @@ const API = {
     });
     return rows;
   },
-  async getBalancesByContract({ tokenContract = 'eosio.token', accountName, symbol }) {
-    return eos().getCurrencyBalance(tokenContract, accountName, symbol);
+  async getBalancesByContract({ code = 'eosio.token', accountName, symbol }) {
+    return eos().getCurrencyBalance(code, accountName, symbol);
   },
-  async getRefund(){
+  async getRefund() {
     const { rows } = await eos().getTableRows({
       json: true,
       code: 'cryptomeetup',

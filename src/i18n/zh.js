@@ -102,7 +102,7 @@ export default {
   buy_portal_error: '未在区块链中找到地标',
   buy_portal_success: '购买地标成功',
 
-  my_portal_nav: '我的地标',
+  my_portal_nav: '我的地产',
   my_portal_title: '我拥有的地标',
   my_portal_no_time: '暂无',
   my_portal_name: '名称',

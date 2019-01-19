@@ -28,6 +28,7 @@
 
 <script>
 import { getLocalStorage } from '@/util/storeUtil.js'
+import { mapState } from 'vuex';
 import Global from '@/Global.js'
 
 export default {
@@ -48,6 +49,9 @@ export default {
       pic: '',
       des: '',
     }
+  },
+  computed: {
+    ...mapState(['landInfo', 'scatterAccount']),
   },
   methods: {
     closeMyPortal() {

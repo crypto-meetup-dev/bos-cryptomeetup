@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { Toast } from 'buefy/dist/components/toast';
 import Land from '@/util/land';
+import { ajax } from '@/util/ajax';
 import API, { currentEOSAccount } from '@/util/api';
 import ui from './ui';
 import Global from '@/Global.js';
@@ -89,7 +90,7 @@ export default new Vuex.Store({
         commit('setIsScatterConnected', true);
         if (currentEOSAccount()) {
           commit('setScatterAccount', currentEOSAccount());
-          // dispatch('getMyBalances');
+          dispatch('getMyBalances');
           // dispatch('getPortalInfo');
           // dispatch('getMyStakedInfo');
           // dispatch('getPlayerInfo');
@@ -98,14 +99,23 @@ export default new Vuex.Store({
       }
     },
     async getMyBalances({ commit, state }) {
+      console.log(12121221)
       const { name } = state.scatterAccount;
+      // ajax.post('https://hapi.bos.eosrio.io/v1/chain/get_currency_balance', {
+      //   code: 'eosio.token',
+      //   account: name,
+      //   symbol: 'BOS'
+      // }).then(resp => {
+      //   console.log(resp, 'resp')
+      // })
       const balances = await Promise.all([
-        API.getBalancesByContract({ symbol: 'eos', accountName: name }),
-        API.getBalancesByContract({ symbol: 'cmu', accountName: name, tokenContract: 'dacincubator' }),
+        API.getBalancesByContract({ symbol: 'BOS', accountName: name }),
+        API.getBalancesByContract({ symbol: 'CMU', accountName: name, code: 'ncldwqxpkgav' }),
       ]);
+      console.log(balances, 'balances')
       const eos = balances[0][0];
       const cmu = balances[1][0];
-      commit('setMyBalance', { symbol: 'eos', balance: eos });
+      commit('setMyBalance', { symbol: 'bos', balance: eos });
       commit('setMyBalance', { symbol: 'cmu', balance: cmu });
     },
     async updateLandInfoAsync({ commit }) {

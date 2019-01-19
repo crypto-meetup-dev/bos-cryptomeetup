@@ -567,7 +567,7 @@ export default {
   mounted() {
     this.connectScatterAsync();
     this.updateLandInfoAsync();
-    // this.updateMarketInfoAsync();
+    this.updateMarketInfoAsync();
     this.getGlobalInfo();
     setInterval(() => {
       this.updateLandInfoAsync();

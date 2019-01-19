@@ -138,16 +138,16 @@ export default new Vuex.Store({
       commit('setIsLoadingData', false);
     },
     async updateMarketInfoAsync({ commit }) {
-      // try {
-      //   const marketInfoTable = await API.getMarketInfoAsync();
-      //   const marketInfo = marketInfoTable[0];
-      //   marketInfo.coin_price = `${((parseFloat(marketInfo.supply.split(' ')[0])) / 10000000000).toDecimal(4).toString()} EOS`;
-      //   marketInfo.supply = `${(parseFloat(marketInfo.supply.split(' ')[0]) - 40000000).toDecimal(4).toString()} CMU`;
-      //   // price, balance, coin_price
-      //   commit('setMarketInfo', marketInfo);
-      // } catch (err) {
-      //   console.error('Failed to fetch market info', err);
-      // }
+      try {
+        const marketInfoTable = await API.getMarketInfoAsync();
+        const marketInfo = marketInfoTable[0];
+        marketInfo.coin_price = `${((parseFloat(marketInfo.supply.split(' ')[0])) / 10000000000).toDecimal(4).toString()} BOS`;
+        marketInfo.supply = `${(parseFloat(marketInfo.supply.split(' ')[0]) - 40000000).toDecimal(4).toString()} CMU`;
+        // price, balance, coin_price
+        commit('setMarketInfo', marketInfo);
+      } catch (err) {
+        console.error('Failed to fetch market info', err);
+      }
     },
     async getMyStakedInfo({ commit, state }) {
       try {
